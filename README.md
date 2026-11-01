@@ -1,0 +1,1 @@
+Personal practice project of a card game base don Ninjutsu from Club Penguin
