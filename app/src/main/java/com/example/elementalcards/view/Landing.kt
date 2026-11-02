@@ -26,11 +26,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.rememberNavController
 import com.example.elementalcards.R
+import com.example.elementalcards.viewmodel.ElementalCardViewModel
 
-@Preview(showBackground = true)
 @Composable
-fun LandingScreen() {
+fun LandingScreen(viewModel: ElementalCardViewModel, navController: NavController) {
     Column(
         modifier = Modifier
             .background(colorResource(id = R.color.black))
@@ -62,7 +66,9 @@ fun LandingScreen() {
 
         )
         Button(
-            onClick = { /* TODO: Handle button click */ },
+            onClick = {
+                navController.navigate(Route.Battle.path)
+            },
             colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.orange)),
             modifier = Modifier
                 .padding(horizontal = 80.dp)

@@ -1,8 +1,5 @@
 package com.example.elementalcards.view
 
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
 
 sealed class Route(val path: String, val label: String) {
     object Landing: Route(
@@ -22,3 +19,4 @@ sealed class Route(val path: String, val label: String) {
         label = "Pack"
     )
 }
+
