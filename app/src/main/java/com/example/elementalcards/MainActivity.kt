@@ -18,6 +18,7 @@ import com.example.elementalcards.data.local.Card
 import com.example.elementalcards.data.local.Element
 import com.example.elementalcards.ui.painter
 import com.example.elementalcards.ui.theme.ElementalCardsTheme
+import com.example.elementalcards.view.LandingScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,14 +39,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-    CardView(
-        card = Card(element = Element.FIRE, value = 1),
-        modifier = Modifier.aspectRatio(7f/2f)
-    )
+    LandingScreen()
 }
 
 @Preview(showBackground = true)
@@ -54,13 +48,4 @@ fun GreetingPreview() {
     ElementalCardsTheme {
         Greeting("Android")
     }
-}
-
-@Composable
-fun CardView(card: Card, modifier: Modifier = Modifier) {
-    Image(
-        painter = card.painter(),
-        contentDescription = "${card.element} ${card.value}",
-        modifier = modifier
-    )
 }
