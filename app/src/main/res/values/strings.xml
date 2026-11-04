@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Elemental Cards</string>
+
+    //All texts related to the landing page
+    <string name="landing_title">Elemental Cards</string>
+    <string name="landing_subtext">Fuego, Agua, Hielo. Domina los elementos</string>
+    <string name="button_play">Jugar</string>
+    <string name="button_colecction">Coleccion</string>
 </resources>
