@@ -43,10 +43,13 @@ class MainActivity : ComponentActivity() {
 
         val factory = ElementalCardViewModelFactory(app.repository)
 
+
+
         setContent {
             ElementalCardsTheme {
                 val navController = rememberNavController()
                 val viewModel: ElementalCardViewModel = viewModel(factory = factory)
+
 
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     NavHost(
@@ -67,3 +70,4 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+

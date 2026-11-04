@@ -11,8 +11,12 @@ class ElementalCardViewModelFactory (
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(ElementalCardViewModel::class.java)) {
+
             return ElementalCardViewModel(repository) as T
+
         }
         throw IllegalArgumentException("Clase ViewModel no reconocida por la fábrica: ${modelClass.name}")
+
+
     }
 }
