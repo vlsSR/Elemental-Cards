@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -37,7 +38,7 @@ fun BattleScreen(
     modifier: Modifier = Modifier
 ) {
 
-    val deck by viewModel.deck.collectAsStateWithLifecycle()
+    val deck by viewModel.playingHand.collectAsStateWithLifecycle()
     val userFirePoints by viewModel.userFirePoints.collectAsStateWithLifecycle()
     val userWaterPoints by viewModel.userWaterPoints.collectAsStateWithLifecycle()
     val userIcePoints by viewModel.userIcePoints.collectAsStateWithLifecycle()
@@ -69,7 +70,8 @@ fun BattleScreen(
             }
             Column(
                 modifier = Modifier.weight(0.5f),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+
             ) {
                 Text("AI:", fontSize = 16.sp, color = colorResource(R.color.white))
                 Text("Fire: $aiFirePoints", fontSize = 12.sp, color = colorResource(R.color.white))
@@ -91,7 +93,7 @@ fun BattleScreen(
         ) {
             val emptyCard = Card(100, Element.MISSING, 1)
 
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(bottom = 150.dp)) {
                 Text(
                     "PLAYER",
                     fontSize = 32.sp,
@@ -110,10 +112,11 @@ fun BattleScreen(
                 "VS",
                 fontSize = 32.sp,
                 color = colorResource(R.color.white),
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(bottom = 150.dp)
             )
 
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(bottom = 150.dp)) {
                 Text(
                     "AI",
                     fontSize = 32.sp,
@@ -132,26 +135,19 @@ fun BattleScreen(
         Row(Modifier.weight(0.2f)) {
             LazyRow(
                 modifier = modifier,
-                contentPadding = PaddingValues(all = 4.dp)
+                contentPadding = PaddingValues(all = 4.dp),
+                horizontalArrangement = Arrangement.Center
 
             ) {
                 items(
                     items = deck,
                     key = { it.id }
                 ) { deck ->
-                    Box(
-                        modifier = Modifier
-                            .size(80.dp)
-                            .clickable { },
-                        contentAlignment = Alignment.Center
-                    ) {
                         Image(
                             painter = deck.painter(),
                             contentDescription = null,
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier.size(80.dp).clickable { viewModel.playCard(deck) }
                         )
-                    }
-
                 }
 
             }
