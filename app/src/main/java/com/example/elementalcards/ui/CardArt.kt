@@ -47,12 +47,17 @@ private val iceArt = listOf(
     R.drawable.card_ice_10,
 )
 
+private val missingArt = listOf(
+    R.drawable.card_placeholder
+)
+
 @get:DrawableRes
 val Card.artRes: Int
     get() = when (element) {
         Element.FIRE -> fireArt
         Element.WATER -> waterArt
         Element.ICE -> iceArt
+        Element.MISSING -> missingArt
     }[value - 1]
 
 @Composable

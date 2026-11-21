@@ -34,7 +34,7 @@ import com.example.elementalcards.R
 import com.example.elementalcards.viewmodel.ElementalCardViewModel
 
 @Composable
-fun LandingScreen(viewModel: ElementalCardViewModel, navController: NavController) {
+fun LandingScreen(viewModel: ElementalCardViewModel, onClickBattle: () -> Unit ) {
     Column(
         modifier = Modifier
             .background(colorResource(id = R.color.black))
@@ -67,7 +67,7 @@ fun LandingScreen(viewModel: ElementalCardViewModel, navController: NavControlle
         )
         Button(
             onClick = {
-                navController.navigate(Route.Battle.path)
+                onClickBattle()
             },
             colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.orange)),
             modifier = Modifier
