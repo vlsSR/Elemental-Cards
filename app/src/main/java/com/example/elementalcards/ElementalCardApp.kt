@@ -5,7 +5,7 @@ import kotlin.getValue
 import com.example.elementalcards.data.local.AppDatabase
 import com.example.elementalcards.data.repository.CardRepository
 
-class ElementalCardApplication : Application() {
+class ElementalCardApp : Application() {
 
     val database by lazy { AppDatabase.getDatabase(this) }
 

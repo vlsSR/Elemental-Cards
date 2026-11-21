@@ -46,7 +46,7 @@ class CardRepository(private val dao: CardDAO) {
         //Aqui uso lo de first pk si no se queda la corrutina en espera del Flow
         val totalDeck = getDeck.first().toMutableSet()
         val playingDeck = mutableSetOf<Card>()
-        for(i in 1..10) {
+        for(i in 1..15) {
             val cardNumber = Random.nextInt(0, totalDeck.size)
             playingDeck.add(totalDeck.elementAt(cardNumber))
             totalDeck.remove(totalDeck.elementAt(cardNumber))

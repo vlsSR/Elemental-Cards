@@ -4,15 +4,14 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,22 +19,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.elementalcards.R
-import com.example.elementalcards.data.local.Card
-import com.example.elementalcards.data.local.Element
 import com.example.elementalcards.ui.painter
 import com.example.elementalcards.viewmodel.ElementalCardViewModel
-import com.example.elementalcards.ui.painter
 
 @Composable
 fun BattleScreen(
     viewModel: ElementalCardViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onEnding: () -> Unit
 ) {
 
     val deck by viewModel.playingHand.collectAsStateWithLifecycle()
@@ -45,7 +41,10 @@ fun BattleScreen(
     val aiFirePoints by viewModel.aiFirePoints.collectAsStateWithLifecycle()
     val aiWaterPoints by viewModel.aiWaterPoints.collectAsStateWithLifecycle()
     val aiIcePoints by viewModel.aiIcePoints.collectAsStateWithLifecycle()
-
+    val playerCard by viewModel.playerCard.collectAsStateWithLifecycle()
+    val computerCard by viewModel.aiCard.collectAsStateWithLifecycle()
+    val gameAlive by viewModel.gameAlive.collectAsStateWithLifecycle()
+    val winner by viewModel.winner.collectAsStateWithLifecycle()
 
     //Main column of the view
     Column(modifier = Modifier.background(colorResource(R.color.black))) {
@@ -91,8 +90,6 @@ fun BattleScreen(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            val emptyCard = Card(100, Element.MISSING, 1)
-
             Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(bottom = 150.dp)) {
                 Text(
                     "PLAYER",
@@ -101,7 +98,7 @@ fun BattleScreen(
                     textAlign = TextAlign.Center
                 )
                 Image(
-                    painter = emptyCard.painter(),
+                    painter = playerCard.painter(),
                     contentDescription = null,
                     modifier = Modifier.size(200.dp),
                 )
@@ -124,7 +121,7 @@ fun BattleScreen(
                     textAlign = TextAlign.Center
                 )
                 Image(
-                    painter = emptyCard.painter(),
+                    painter = computerCard.painter(),
                     contentDescription = null,
                     modifier = Modifier.size(200.dp),
                 )
@@ -154,5 +151,17 @@ fun BattleScreen(
         }
     }
 
+    if (!gameAlive) {
+        AlertDialog(
+            onDismissRequest = { },
+            title = { Text("GAME END") },
+            text = { Text("The Winner of the match is the $winner") },
+            confirmButton = {
+                Button(onClick = { onEnding() }) {
+                    Text("Go Back")
+                }
+            }
+        )
+    }
 
 }

@@ -5,13 +5,4 @@ enum class Element {
     WATER,
     ICE,
     MISSING;
-
-    fun beats(other: Element): Boolean {
-        return when (this) {
-            FIRE -> other == ICE
-            WATER -> other == FIRE
-            ICE -> other == WATER
-            MISSING -> false
-        }
-    }
 }

@@ -1,27 +1,49 @@
 package com.example.elementalcards.viewmodel
 
+import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.elementalcards.ElementalCardApp
 import com.example.elementalcards.data.local.Card
+import com.example.elementalcards.data.local.Element
+import com.example.elementalcards.data.local.Element.FIRE
+import com.example.elementalcards.data.local.Element.ICE
+import com.example.elementalcards.data.local.Element.MISSING
+import com.example.elementalcards.data.local.Element.WATER
 import com.example.elementalcards.data.repository.CardRepository
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.onEmpty
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.util.Collections.emptyList
 
 class ElementalCardViewModel(private val repository: CardRepository) : ViewModel() {
 
-    init {
-        initDeck()
-    }
+
+
+    private var _winner = MutableStateFlow("")
+    val winner: StateFlow<String> = _winner.asStateFlow()
+
+    private val _gameAlive = MutableStateFlow(true)
+    val gameAlive: StateFlow<Boolean> = _gameAlive.asStateFlow()
+
+    private val _aiPlayingDeck = MutableStateFlow<MutableList<Card>>(emptyList())
 
     private val _playingHand = MutableStateFlow<List<Card>>(emptyList())
     val playingHand: StateFlow<List<Card>> = _playingHand.asStateFlow()
 
     private val _drawPile = MutableStateFlow<List<Card>>(emptyList())
+
+
+    private val _playerCard = MutableStateFlow(Card(100, Element.MISSING, 1))
+    val playerCard: StateFlow<Card> = _playerCard.asStateFlow()
+
+    private val _aiCard = MutableStateFlow(Card(100, Element.MISSING, 1))
+
+    val aiCard: StateFlow<Card> = _aiCard.asStateFlow()
     private var _userFirePoints = MutableStateFlow(0)
     val userFirePoints: StateFlow<Int> = _userFirePoints.asStateFlow()
 
@@ -40,6 +62,7 @@ class ElementalCardViewModel(private val repository: CardRepository) : ViewModel
     private val _aiIcePoints = MutableStateFlow(0)
     val aiIcePoints = _aiIcePoints.asStateFlow()
 
+
     private fun initDeck() {
         viewModelScope.launch {
             try {
@@ -53,15 +76,67 @@ class ElementalCardViewModel(private val repository: CardRepository) : ViewModel
                 _playingHand.value = initialHand
                 _drawPile.value = remainingCards
 
+                _aiPlayingDeck.value = repository.getPlayingDeck().toMutableList()
+
 
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
+
     }
 
 
-    fun playCard(card: Card) {
+    fun playCard(playerCard: Card) {
+        updateCard(playerCard)
+
+        val aiCard = _aiPlayingDeck.value.removeAt(0)
+
+        _playerCard.value = playerCard
+        _aiCard.value = aiCard
+        if (playerCard.element == aiCard.element) {
+            when {
+                playerCard.value > aiCard.value -> addPlayerPoint(playerCard.element)
+                playerCard.value < aiCard.value -> addAiPoint(playerCard.element)
+            }
+        } else {
+            if (playerBeats(playerCard.element, aiCard.element)) {
+                addPlayerPoint(playerCard.element)
+            } else {
+                addAiPoint(aiCard.element)
+            }
+        }
+        checkVictory()
+    }
+
+    fun addPlayerPoint(element: Element) {
+        when (element) {
+            FIRE -> _userFirePoints.value++
+            WATER -> _userWaterPoints.value++
+            ICE -> _userIcePoints.value++
+            MISSING -> TODO()
+        }
+    }
+
+    fun addAiPoint(element: Element) {
+        when (element) {
+            FIRE -> _aiFirePoints.value++
+            WATER -> _aiWaterPoints.value++
+            ICE -> _aiIcePoints.value++
+            MISSING -> TODO()
+        }
+    }
+
+    fun playerBeats(playerElement: Element, aiElement: Element): Boolean {
+        return when (playerElement) {
+            FIRE -> aiElement == ICE
+            WATER -> aiElement == FIRE
+            ICE -> aiElement == WATER
+            MISSING -> false
+        }
+    }
+
+    fun updateCard(card: Card) {
         val currentHand = _playingHand.value.toMutableList()
         val currentDrawPile = _drawPile.value.toMutableList()
         val currentCardIndex = currentHand.indexOf(card)
@@ -75,4 +150,50 @@ class ElementalCardViewModel(private val repository: CardRepository) : ViewModel
         _playingHand.value = currentHand
         _drawPile.value = currentDrawPile
     }
+
+    fun checkVictory() {
+        if (
+            _userIcePoints.value >= 3 || _userFirePoints.value >= 3 || _userWaterPoints.value >= 3 ||
+            (_userIcePoints.value >= 1 && _userFirePoints.value >= 1 && _userWaterPoints.value >= 1)
+            ) {
+            _winner.value = "PLAYER"
+            _gameAlive.value = false
+        } else if(
+            _aiIcePoints.value >= 3 || _aiFirePoints.value >= 3 || _aiWaterPoints.value >= 3 ||
+            (_aiIcePoints.value >= 1 && _aiFirePoints.value >= 1 && _aiWaterPoints.value >= 1)
+        ) {
+            _winner.value = "AI"
+            _gameAlive.value = false
+        } else if(_aiPlayingDeck.value.size == 0) {
+            _winner.value = "DRAW"
+            _gameAlive.value = false
+        }
+    }
+
+    fun reset() {
+        _userIcePoints.value = 0
+        _userWaterPoints.value = 0
+        _userFirePoints.value = 0
+        _aiWaterPoints.value = 0
+        _aiFirePoints.value = 0
+        _aiIcePoints.value = 0
+        _winner.value = ""
+        _playerCard.value = Card(100, Element.MISSING, 1)
+        _aiCard.value = Card(100, Element.MISSING, 1)
+        _gameAlive.value = true
+    }
+
+    fun startNewGame() {
+        reset()
+        initDeck()
+    }
 }
+
+val ElementalCardViewModelFactory = viewModelFactory {
+    initializer {
+        val app =
+            this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as ElementalCardApp
+        ElementalCardViewModel(app.repository)
+    }
+}
+
