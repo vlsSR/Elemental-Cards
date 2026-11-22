@@ -8,7 +8,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.elementalcards.viewmodel.ElementalCardViewModel
+import com.example.elementalcards.viewmodel.BattleViewModel
+import com.example.elementalcards.viewmodel.CollectionViewModel
 
 
 sealed class Route(val path: String, val label: String) {
@@ -20,9 +21,9 @@ sealed class Route(val path: String, val label: String) {
         path = "battle",
         label = "Battle"
     )
-    object Deck: Route(
-        path = "deck",
-        label = "Deck"
+    object Collection: Route(
+        path = "collection",
+        label = "Collection"
     )
     object Pack: Route(
         path = "pack",
@@ -31,7 +32,7 @@ sealed class Route(val path: String, val label: String) {
 }
 
 @Composable
-fun StartApp(viewModel: ElementalCardViewModel) {
+fun StartApp(battleViewModel: BattleViewModel, colecctionViewModel: CollectionViewModel) {
     val navController = rememberNavController()
 
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
@@ -41,13 +42,13 @@ fun StartApp(viewModel: ElementalCardViewModel) {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Route.Landing.path) {
-                LandingScreen(viewModel = viewModel,
-                    { viewModel.startNewGame()
+                LandingScreen(
+                    { battleViewModel.startNewGame()
                         navController.navigate(Route.Battle.path)
                     })
             }
             composable(Route.Battle.path) {
-                BattleScreen(viewModel = viewModel, modifier = Modifier.fillMaxSize(), { navController.popBackStack() })
+                BattleScreen(viewModel = battleViewModel, modifier = Modifier.fillMaxSize(), { navController.popBackStack() })
             }
         }
 

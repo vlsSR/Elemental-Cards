@@ -25,11 +25,11 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.elementalcards.R
 import com.example.elementalcards.ui.painter
-import com.example.elementalcards.viewmodel.ElementalCardViewModel
+import com.example.elementalcards.viewmodel.BattleViewModel
 
 @Composable
 fun BattleScreen(
-    viewModel: ElementalCardViewModel,
+    viewModel: BattleViewModel,
     modifier: Modifier = Modifier,
     onEnding: () -> Unit
 ) {

@@ -10,10 +10,11 @@ import kotlinx.coroutines.flow.toSet
 import kotlin.random.Random
 
 class CardRepository(private val dao: CardDAO) {
+    val DECK_SIZE = 15
     val getDeck: Flow<List<Card>> = dao.getDeck()
 
-    suspend fun insert(card: Card) {
-        dao.insertCard(card)
+    suspend fun addCard(card: Card) {
+        dao.addCard(card)
     }
 
     suspend fun delete(card: Card) {
@@ -25,32 +26,52 @@ class CardRepository(private val dao: CardDAO) {
     }
 
     suspend fun initDeck() {
-        insert(Card(element = Element.FIRE, value = 1))
-        insert(Card(element = Element.FIRE, value = 2))
-        insert(Card(element = Element.FIRE, value = 3))
-        insert(Card(element = Element.FIRE, value = 4))
-        insert(Card(element = Element.FIRE, value = 5))
-        insert(Card(element = Element.WATER, value = 1))
-        insert(Card(element = Element.WATER, value = 2))
-        insert(Card(element = Element.WATER, value = 3))
-        insert(Card(element = Element.WATER, value = 4))
-        insert(Card(element = Element.WATER, value = 5))
-        insert(Card(element = Element.ICE, value = 1))
-        insert(Card(element = Element.ICE, value = 2))
-        insert(Card(element = Element.ICE, value = 3))
-        insert(Card(element = Element.ICE, value = 4))
-        insert(Card(element = Element.ICE, value = 5))
+        if (dao.getCardCount() == 0) {
+            addCard(Card(element = Element.FIRE, value = 1, inDeck = true))
+            addCard(Card(element = Element.FIRE, value = 2, inDeck = true))
+            addCard(Card(element = Element.FIRE, value = 3, inDeck = true))
+            addCard(Card(element = Element.FIRE, value = 4, inDeck = true))
+            addCard(Card(element = Element.FIRE, value = 5, inDeck = true))
+            addCard(Card(element = Element.WATER, value = 1, inDeck = true))
+            addCard(Card(element = Element.WATER, value = 2, inDeck = true))
+            addCard(Card(element = Element.WATER, value = 3, inDeck = true))
+            addCard(Card(element = Element.WATER, value = 4, inDeck = true))
+            addCard(Card(element = Element.WATER, value = 5, inDeck = true))
+            addCard(Card(element = Element.ICE, value = 1, inDeck = true))
+            addCard(Card(element = Element.ICE, value = 2, inDeck = true))
+            addCard(Card(element = Element.ICE, value = 3, inDeck = true))
+            addCard(Card(element = Element.ICE, value = 4, inDeck = true))
+            addCard(Card(element = Element.ICE, value = 5, inDeck = true))
+        }
     }
 
-    suspend fun getPlayingDeck(): MutableSet<Card> {
-        //Aqui uso lo de first pk si no se queda la corrutina en espera del Flow
-        val totalDeck = getDeck.first().toMutableSet()
-        val playingDeck = mutableSetOf<Card>()
-        for(i in 1..15) {
-            val cardNumber = Random.nextInt(0, totalDeck.size)
-            playingDeck.add(totalDeck.elementAt(cardNumber))
-            totalDeck.remove(totalDeck.elementAt(cardNumber))
-        }
-        return playingDeck
+    suspend fun getPlayingDeck(): MutableList<Card> {
+        val deck = dao.getDeckCards().first()
+        val shuffledDeck = deck.toMutableList()
+        shuffledDeck.shuffle()
+
+        return shuffledDeck
+    }
+
+    fun getAiPlayingDeck(): MutableList<Card> {
+        val aiDeck =mutableListOf(
+            Card(element = Element.FIRE, value = 1),
+            Card(element = Element.FIRE, value = 2),
+            Card(element = Element.FIRE, value = 3),
+            Card(element = Element.FIRE, value = 4),
+            Card(element = Element.FIRE, value = 5),
+            Card(element = Element.WATER, value = 1),
+            Card(element = Element.WATER, value = 2),
+            Card(element = Element.WATER, value = 3),
+            Card(element = Element.WATER, value = 4),
+            Card(element = Element.WATER, value = 5),
+            Card(element = Element.ICE, value = 1),
+            Card(element = Element.ICE, value = 2),
+            Card(element = Element.ICE, value = 3),
+            Card(element = Element.ICE, value = 4),
+            Card(element = Element.ICE, value = 5)
+        )
+        aiDeck.shuffle()
+        return aiDeck
     }
 }
