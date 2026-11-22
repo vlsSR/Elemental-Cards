@@ -1,6 +1,5 @@
 package com.example.elementalcards.viewmodel
 
-import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -20,7 +19,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.util.Collections.emptyList
 
-class ElementalCardViewModel(private val repository: CardRepository) : ViewModel() {
+class BattleViewModel(private val repository: CardRepository) : ViewModel() {
 
 
 
@@ -66,18 +65,12 @@ class ElementalCardViewModel(private val repository: CardRepository) : ViewModel
     private fun initDeck() {
         viewModelScope.launch {
             try {
-                repository.deleteAll()
                 repository.initDeck()
-                val startingCards = repository.getPlayingDeck().toMutableSet()
 
-                val initialHand = startingCards.take(5).toMutableList()
-                val remainingCards = startingCards.drop(5).toMutableList()
-
-                _playingHand.value = initialHand
-                _drawPile.value = remainingCards
-
-                _aiPlayingDeck.value = repository.getPlayingDeck().toMutableList()
-
+                val playerDeck = repository.getPlayingDeck()
+                _playingHand.value = playerDeck.take(5)
+                _drawPile.value = playerDeck.drop(5)
+                _aiPlayingDeck.value = repository.getAiPlayingDeck().toMutableList()
 
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -88,6 +81,10 @@ class ElementalCardViewModel(private val repository: CardRepository) : ViewModel
 
 
     fun playCard(playerCard: Card) {
+        if (!_gameAlive.value) return
+        if (playerCard.element == Element.MISSING) return
+        if (_aiPlayingDeck.value.isEmpty()) return
+
         updateCard(playerCard)
 
         val aiCard = _aiPlayingDeck.value.removeAt(0)
@@ -114,7 +111,7 @@ class ElementalCardViewModel(private val repository: CardRepository) : ViewModel
             FIRE -> _userFirePoints.value++
             WATER -> _userWaterPoints.value++
             ICE -> _userIcePoints.value++
-            MISSING -> TODO()
+            MISSING -> Unit
         }
     }
 
@@ -123,7 +120,7 @@ class ElementalCardViewModel(private val repository: CardRepository) : ViewModel
             FIRE -> _aiFirePoints.value++
             WATER -> _aiWaterPoints.value++
             ICE -> _aiIcePoints.value++
-            MISSING -> TODO()
+            MISSING -> Unit
         }
     }
 
@@ -152,11 +149,14 @@ class ElementalCardViewModel(private val repository: CardRepository) : ViewModel
     }
 
     fun checkVictory() {
+        if (!_gameAlive.value) return
+
         if (
             _userIcePoints.value >= 3 || _userFirePoints.value >= 3 || _userWaterPoints.value >= 3 ||
             (_userIcePoints.value >= 1 && _userFirePoints.value >= 1 && _userWaterPoints.value >= 1)
             ) {
             _winner.value = "PLAYER"
+            giveVictoryReward()
             _gameAlive.value = false
         } else if(
             _aiIcePoints.value >= 3 || _aiFirePoints.value >= 3 || _aiWaterPoints.value >= 3 ||
@@ -183,17 +183,37 @@ class ElementalCardViewModel(private val repository: CardRepository) : ViewModel
         _gameAlive.value = true
     }
 
+    private fun giveVictoryReward() {
+        viewModelScope.launch {
+            val element = listOf(
+                Element.FIRE,
+                Element.WATER,
+                Element.ICE
+            ).random()
+
+            val value = (1..10).random()
+
+            repository.addCard(
+                Card(
+                    element = element,
+                    value = value,
+                    inDeck = false
+                )
+            )
+        }
+    }
+
     fun startNewGame() {
         reset()
         initDeck()
     }
 }
 
-val ElementalCardViewModelFactory = viewModelFactory {
+val BattleViewModelFactory = viewModelFactory {
     initializer {
         val app =
             this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as ElementalCardApp
-        ElementalCardViewModel(app.repository)
+        BattleViewModel(app.repository)
     }
 }
 
