@@ -6,4 +6,16 @@
     <string name="landing_subtext">Fuego, Agua, Hielo. Domina los elementos</string>
     <string name="button_play">Jugar</string>
     <string name="button_colecction">Coleccion</string>
+    <string name="battle_player_text">Player:</string>
+    <string name="battle_element_fire">Fire: %1$d</string>
+    <string name="battle_element_water">Water: %1$d</string>
+    <string name="battle_element_ice">Ice: %1$d</string>
+    <string name="battle_player_text_caps">PLAYER</string>
+    <string name="battle_vs_text_caps">VS</string>
+    <string name="battle_ai_text_caps">AI</string>
+    <string name="battle_text_game_end">GAME END</string>
+    <string name="battle_button_text_back">Go Back</string>
+    <string name="battle_text_loser">The Winner of the match is the %1$s</string>
+    <string name="battle_text_winner">The Winner of the match is the %1$s \nYou earned this card:</string>
+    <string name="battle_text_if_win">\nYou earned this card:\n</string>
 </resources>
