@@ -26,6 +26,9 @@ class BattleViewModel(private val repository: CardRepository) : ViewModel() {
     private var _winner = MutableStateFlow("")
     val winner: StateFlow<String> = _winner.asStateFlow()
 
+    private val _victoryReward = MutableStateFlow<Card?>(null)
+    val victoryReward: StateFlow<Card?> = _victoryReward.asStateFlow()
+
     private val _gameAlive = MutableStateFlow(true)
     val gameAlive: StateFlow<Boolean> = _gameAlive.asStateFlow()
 
@@ -37,10 +40,10 @@ class BattleViewModel(private val repository: CardRepository) : ViewModel() {
     private val _drawPile = MutableStateFlow<List<Card>>(emptyList())
 
 
-    private val _playerCard = MutableStateFlow(Card(100, Element.MISSING, 1))
+    private val _playerCard = MutableStateFlow(Card(100, MISSING, 1))
     val playerCard: StateFlow<Card> = _playerCard.asStateFlow()
 
-    private val _aiCard = MutableStateFlow(Card(100, Element.MISSING, 1))
+    private val _aiCard = MutableStateFlow(Card(100, MISSING, 1))
 
     val aiCard: StateFlow<Card> = _aiCard.asStateFlow()
     private var _userFirePoints = MutableStateFlow(0)
@@ -82,7 +85,7 @@ class BattleViewModel(private val repository: CardRepository) : ViewModel() {
 
     fun playCard(playerCard: Card) {
         if (!_gameAlive.value) return
-        if (playerCard.element == Element.MISSING) return
+        if (playerCard.element == MISSING) return
         if (_aiPlayingDeck.value.isEmpty()) return
 
         updateCard(playerCard)
@@ -178,28 +181,30 @@ class BattleViewModel(private val repository: CardRepository) : ViewModel() {
         _aiFirePoints.value = 0
         _aiIcePoints.value = 0
         _winner.value = ""
-        _playerCard.value = Card(100, Element.MISSING, 1)
-        _aiCard.value = Card(100, Element.MISSING, 1)
+        _victoryReward.value = null
+        _playerCard.value = Card(100, MISSING, 1)
+        _aiCard.value = Card(100, MISSING, 1)
         _gameAlive.value = true
     }
 
     private fun giveVictoryReward() {
         viewModelScope.launch {
             val element = listOf(
-                Element.FIRE,
-                Element.WATER,
-                Element.ICE
+                FIRE,
+                WATER,
+                ICE
             ).random()
 
             val value = (1..10).random()
 
-            repository.addCard(
-                Card(
-                    element = element,
-                    value = value,
-                    inDeck = false
-                )
+            val reward = Card(
+                element = element,
+                value = value,
+                inDeck = false
             )
+
+            repository.addCard(reward)
+            _victoryReward.value = reward
         }
     }
 

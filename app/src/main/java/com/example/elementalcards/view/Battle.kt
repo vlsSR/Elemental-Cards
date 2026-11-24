@@ -19,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -45,6 +46,7 @@ fun BattleScreen(
     val computerCard by viewModel.aiCard.collectAsStateWithLifecycle()
     val gameAlive by viewModel.gameAlive.collectAsStateWithLifecycle()
     val winner by viewModel.winner.collectAsStateWithLifecycle()
+    val reward by viewModel.victoryReward.collectAsStateWithLifecycle()
 
     //Main column of the view
     Column(modifier = Modifier.background(colorResource(R.color.black))) {
@@ -54,18 +56,18 @@ fun BattleScreen(
                 modifier = Modifier.weight(0.5f),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Player:", fontSize = 16.sp, color = colorResource(R.color.white))
+                Text(stringResource(R.string.battle_player_text), fontSize = 16.sp, color = colorResource(R.color.white))
                 Text(
-                    "Fire: $userFirePoints",
+                    stringResource(R.string.battle_element_fire, userFirePoints),
                     fontSize = 12.sp,
                     color = colorResource(R.color.white)
                 )
                 Text(
-                    "Water: $userWaterPoints",
+                    stringResource(R.string.battle_element_water, userWaterPoints),
                     fontSize = 12.sp,
                     color = colorResource(R.color.white)
                 )
-                Text("Ice: $userIcePoints", fontSize = 12.sp, color = colorResource(R.color.white))
+                Text(stringResource(R.string.battle_element_ice, userIcePoints), fontSize = 12.sp, color = colorResource(R.color.white))
             }
             Column(
                 modifier = Modifier.weight(0.5f),
@@ -73,13 +75,13 @@ fun BattleScreen(
 
             ) {
                 Text("AI:", fontSize = 16.sp, color = colorResource(R.color.white))
-                Text("Fire: $aiFirePoints", fontSize = 12.sp, color = colorResource(R.color.white))
+                Text(stringResource(R.string.battle_element_fire, aiFirePoints), fontSize = 12.sp, color = colorResource(R.color.white))
                 Text(
-                    "Water: $aiWaterPoints",
+                    stringResource(R.string.battle_element_water, aiWaterPoints),
                     fontSize = 12.sp,
                     color = colorResource(R.color.white)
                 )
-                Text("Ice: $aiIcePoints", fontSize = 12.sp, color = colorResource(R.color.white))
+                Text(stringResource(R.string.battle_element_ice, aiIcePoints), fontSize = 12.sp, color = colorResource(R.color.white))
             }
 
         }
@@ -92,7 +94,7 @@ fun BattleScreen(
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(bottom = 150.dp)) {
                 Text(
-                    "PLAYER",
+                    stringResource(R.string.battle_player_text_caps),
                     fontSize = 32.sp,
                     color = colorResource(R.color.light_blue),
                     textAlign = TextAlign.Center
@@ -106,7 +108,7 @@ fun BattleScreen(
 
 
             Text(
-                "VS",
+                stringResource(R.string.battle_vs_text_caps),
                 fontSize = 32.sp,
                 color = colorResource(R.color.white),
                 textAlign = TextAlign.Center,
@@ -115,7 +117,7 @@ fun BattleScreen(
 
             Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(bottom = 150.dp)) {
                 Text(
-                    "AI",
+                    stringResource(R.string.battle_ai_text_caps),
                     fontSize = 32.sp,
                     color = colorResource(R.color.light_orange),
                     textAlign = TextAlign.Center
@@ -143,7 +145,9 @@ fun BattleScreen(
                         Image(
                             painter = deck.painter(),
                             contentDescription = null,
-                            modifier = Modifier.size(80.dp).clickable { viewModel.playCard(deck) }
+                            modifier = Modifier
+                                .size(80.dp)
+                                .clickable { viewModel.playCard(deck) }
                         )
                 }
 
@@ -154,14 +158,32 @@ fun BattleScreen(
     if (!gameAlive) {
         AlertDialog(
             onDismissRequest = { },
-            title = { Text("GAME END") },
-            text = { Text("The Winner of the match is the $winner") },
+            title = { Text(stringResource(R.string.battle_text_game_end)) },
+            text = {
+                Column(Modifier, verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(""+stringResource(R.string.battle_text_loser, winner)+
+                            "${
+                                if (winner.equals(stringResource(R.string.battle_player_text_caps))) stringResource(R.string.battle_text_if_win)
+                                else ""
+                            } ")
+
+                    if (winner.equals(stringResource(R.string.battle_player_text_caps))) {
+                        reward?.let { rewardCard ->
+                            Image(
+                                painter = rewardCard.painter(),
+                                contentDescription = null,
+                                modifier = Modifier.size(120.dp)
+                            )
+                        }
+
+                    }
+                }
+            },
             confirmButton = {
                 Button(onClick = { onEnding() }) {
-                    Text("Go Back")
+                    Text(stringResource(R.string.battle_button_text_back))
                 }
             }
         )
     }
-
 }

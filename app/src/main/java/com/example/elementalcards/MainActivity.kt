@@ -20,8 +20,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             ElementalCardsTheme {
                 val battleViewModel: BattleViewModel = viewModel(factory = BattleViewModelFactory)
-                val colecctionViewModel: CollectionViewModel = viewModel(factory = CollectionViewModelFactory)
-                StartApp(battleViewModel, colecctionViewModel)
+                val collectionViewModel: CollectionViewModel = viewModel(factory = CollectionViewModelFactory)
+                StartApp(battleViewModel, collectionViewModel)
             }
         }
     }
