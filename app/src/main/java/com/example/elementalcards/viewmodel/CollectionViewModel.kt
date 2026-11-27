@@ -13,7 +13,6 @@ import com.example.elementalcards.data.repository.CardRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 data class CollectionCard(
@@ -21,8 +20,13 @@ data class CollectionCard(
     val isUnlocked: Boolean
 )
 
+data class ElementCards(
+    val element: Element,
+    val cards: List<CollectionCard>
+)
+
 data class CollectionUiState(
-    val cardsByElement: Map<Element, List<CollectionCard>> = emptyMap(),
+    val cardsByElement: List<ElementCards> = emptyList(),
     val collectionCount: Int = 0,
     val equippedCount: Int = 0,
     val equippedPoints: Int = 0,
@@ -38,17 +42,7 @@ class CollectionViewModel(private val repository: CardRepository) : ViewModel() 
         viewModelScope.launch {
             repository.initDeck()
             repository.unlockedCards.collect { unlockedCards ->
-                val cardsByKey = unlockedCards.associateBy { it.element to it.value }
-                val cardsByElement = listOf(Element.FIRE, Element.WATER, Element.ICE)
-                    .associateWith { element ->
-                        (1..10).map { value ->
-                            val card = cardsByKey[element to value]
-                            CollectionCard(
-                                card = card ?: Card(element = element, value = value),
-                                isUnlocked = card != null
-                            )
-                        }
-                    }
+                val cardsByElement = createCardsByElement(unlockedCards)
                 val equippedCards = unlockedCards.filter { it.inDeck }
                 _state.value = CollectionUiState(
                     cardsByElement = cardsByElement,
@@ -58,6 +52,35 @@ class CollectionViewModel(private val repository: CardRepository) : ViewModel() 
                 )
             }
         }
+    }
+
+    private fun createCardsByElement(unlockedCards: List<Card>): List<ElementCards> {
+        val result = mutableListOf<ElementCards>()
+
+        for (element in listOf(Element.FIRE, Element.WATER, Element.ICE)) {
+            val cards = mutableListOf<CollectionCard>()
+
+            for (value in 1..10) {
+                val card = unlockedCards.firstOrNull {
+                    it.element == element && it.value == value
+                }
+
+                if (card == null) {
+                    cards.add(
+                        CollectionCard(
+                            card = Card(element = element, value = value),
+                            isUnlocked = false
+                        )
+                    )
+                } else {
+                    cards.add(CollectionCard(card = card, isUnlocked = true))
+                }
+            }
+
+            result.add(ElementCards(element = element, cards = cards))
+        }
+
+        return result
     }
 
     fun toggleCard(collectionCard: CollectionCard) {
@@ -70,8 +93,8 @@ class CollectionViewModel(private val repository: CardRepository) : ViewModel() 
             return
         }
 
-        val equippedCards = _state.value.cardsByElement.values
-            .flatten()
+        val equippedCards = _state.value.cardsByElement
+            .flatMap { it.cards }
             .filter { it.card.inDeck }
         if (equippedCards.size >= 15) {
             _state.value = _state.value.copy(selectionMessage = R.string.collection_deck_full)

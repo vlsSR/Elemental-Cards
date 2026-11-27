@@ -34,10 +34,6 @@ sealed class Route(val path: String, val label: String) {
         path = "collection",
         label = "Collection"
     )
-    object Pack: Route(
-        path = "pack",
-        label = "Pack"
-    )
 }
 
 @Composable

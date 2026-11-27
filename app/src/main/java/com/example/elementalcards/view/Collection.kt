@@ -75,14 +75,6 @@ fun CollectionScreen(viewModel: CollectionViewModel, onBack: () -> Unit) {
             )
         }
 
-        if (state.collectionCount == 0) {
-            Text(
-                stringResource(R.string.collection_empty),
-                color = colorResource(R.color.white),
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-        }
         state.selectionMessage?.let {
             Text(
                 stringResource(it),
@@ -115,13 +107,17 @@ fun CollectionScreen(viewModel: CollectionViewModel, onBack: () -> Unit) {
                         fontSize = 14.sp,
                         modifier = Modifier.padding(bottom = 4.dp)
                     )
+                    val cards = state.cardsByElement
+                        .firstOrNull { it.element == element }
+                        ?.cards
+                        .orEmpty()
                     LazyColumn(
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxWidth()
                     ) {
                         items(
-                            items = state.cardsByElement[element].orEmpty(),
+                            items = cards,
                             key = { "${it.card.element}_${it.card.value}" }
                         ) { collectionCard ->
                             CollectionCardItem(
@@ -165,17 +161,7 @@ private fun CollectionCardItem(collectionCard: CollectionCard, onClick: () -> Un
     ) {
         Image(
             painter = card.painter(),
-            contentDescription = stringResource(
-                R.string.collection_card_description,
-                stringResource(
-                    when (card.element) {
-                        Element.FIRE -> R.string.collection_fire
-                        Element.WATER -> R.string.collection_water
-                        Element.ICE, Element.MISSING -> R.string.collection_ice
-                    }
-                ),
-                card.value
-            ),
+            contentDescription = "",
             modifier = Modifier.fillMaxSize(),
             colorFilter = if (collectionCard.isUnlocked) null else {
                 ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) })

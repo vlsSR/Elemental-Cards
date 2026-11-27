@@ -76,13 +76,13 @@ class BattleViewModel(private val repository: CardRepository) : ViewModel() {
                     playerDeck.sumOf { it.value } > repository.MAX_POINTS
                 ) {
                     onInvalidDeck()
-                    return@launch
+                } else {
+                    _playingHand.value = playerDeck.take(5)
+                    _drawPile.value = playerDeck.drop(5)
+                    _aiPlayingDeck.value = repository.getAiPlayingDeck().toMutableList()
+                    onDeckReady()
                 }
 
-                _playingHand.value = playerDeck.take(5)
-                _drawPile.value = playerDeck.drop(5)
-                _aiPlayingDeck.value = repository.getAiPlayingDeck().toMutableList()
-                onDeckReady()
             } catch (e: Exception) {
                 e.printStackTrace()
             }
