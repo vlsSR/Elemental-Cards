@@ -13,13 +13,31 @@ A continuacion la comparativa de las pantallas, primero mockup, segundo Pixel 9,
 
 #### Landing Page
 
-![Mockup lading page](./references/landingMockup.png) ![Landing page P9](references/landingScreenP9.png) ![Landing page P10](references/landingScreenP10.png)
+<table>
+  <tr>
+    <td width="33%"><img src="./references/landingMockup.png" alt="Mockup lading page" /></td>
+    <td width="33%"><img src="references/landingScreenP9.png" alt="Landing page P9" /></td>
+    <td width="33%"><img src="references/landingScreenP10.png" alt="Landing page P10" /></td>
+  </tr>
+</table>
 
 #### Battle Screen
-![Mockup battle screen](./references/battleMockup.png) ![Battle screen P9](./references/battleScreenP9.png) ![Battle screen P10](./references/battleScreenP10.png)
+<table>
+  <tr>
+    <td width="33%"><img src="./references/battleMockup.png" alt="Mockup battle screen" /></td>
+    <td width="33%"><img src="./references/battleScreenP9.png" alt="Battle screen P9" /></td>
+    <td width="33%"><img src="./references/battleScreenP10.png" alt="Battle screen P10" /></td>
+  </tr>
+</table>
 
 #### Collection Screen
-![Mockup collection screen](./references/collectionMockup.png) ![Collection screen P9](./references/collectionScreenP9.png) [Battle screen P10](./references/collectionScreenP10.png)
+<table>
+  <tr>
+    <td width="33%"><img src="./references/collectionMockup.png" alt="Mockup collection screen" /></td>
+    <td width="33%"><img src="./references/collectionScreenP9.png" alt="Collection screen P9" /></td>
+    <td width="33%"><img src="./references/battleScreenP10.png" alt="Battle screen P10" /></td>
+  </tr>
+</table>
 
 USO DE IA:
 - Los sprites de las cartas y el logo de inicio fueron generados con Claude.
