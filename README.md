@@ -39,7 +39,7 @@ A continuacion la comparativa de las pantallas, primero mockup, segundo Pixel 9,
   </tr>
 </table>
 
-USO DE IA:
+## USO DE IA:
 - Los sprites de las cartas y el logo de inicio fueron generados con Claude.
 - La clase CardArt para poder mostrar los rates de las diferentes cartas creando la funcion painter fue creada con la ayuda de Gemini ya que no sabia como imeplementar esta funcion
 - El PopUp al terminar la batalla fue creado con ayuda de claude para poder entender y implementar la logica necesaria y la vista relacionada con el PopUp
