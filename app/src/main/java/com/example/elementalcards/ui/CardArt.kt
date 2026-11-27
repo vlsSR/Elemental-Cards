@@ -1,6 +1,5 @@
 package com.example.elementalcards.ui
 
-import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
@@ -47,18 +46,13 @@ private val iceArt = listOf(
     R.drawable.card_ice_10,
 )
 
-private val missingArt = listOf(
-    R.drawable.card_placeholder
-)
-
-@get:DrawableRes
 val Card.artRes: Int
     get() = when (element) {
-        Element.FIRE -> fireArt
-        Element.WATER -> waterArt
-        Element.ICE -> iceArt
-        Element.MISSING -> missingArt
-    }[value - 1]
+        Element.FIRE -> fireArt[value - 1]
+        Element.WATER -> waterArt[value - 1]
+        Element.ICE -> iceArt[value - 1]
+        Element.MISSING -> R.drawable.card_placeholder
+    }
 
 @Composable
 fun Card.painter(): Painter = painterResource(artRes)

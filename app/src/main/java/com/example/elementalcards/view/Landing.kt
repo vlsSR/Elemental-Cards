@@ -21,10 +21,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.elementalcards.R
-import com.example.elementalcards.viewmodel.BattleViewModel
 
 @Composable
-fun LandingScreen(onClickBattle: () -> Unit ) {
+fun LandingScreen(onClickBattle: () -> Unit, onClickCollection: () -> Unit) {
     Column(
         modifier = Modifier
             .background(colorResource(id = R.color.black))
@@ -69,7 +68,7 @@ fun LandingScreen(onClickBattle: () -> Unit ) {
         }
 
         Button(
-            onClick = { /* TODO: Handle button click */ },
+            onClick = onClickCollection,
             colors = ButtonDefaults.buttonColors(
                 containerColor = colorResource(id = R.color.white),
                 contentColor = colorResource(id = R.color.orange)

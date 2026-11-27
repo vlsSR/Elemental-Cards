@@ -18,4 +18,20 @@
     <string name="battle_text_loser">The Winner of the match is the %1$s</string>
     <string name="battle_text_winner">The Winner of the match is the %1$s \nYou earned this card:</string>
     <string name="battle_text_if_win">\nYou earned this card:\n</string>
+    <string name="collection_title">Colección</string>
+    <string name="collection_count">Colección: %1$d</string>
+    <string name="collection_equipped_count">Mazo: %1$d/15</string>
+    <string name="collection_equipped_points">Puntos: %1$d/80</string>
+    <string name="collection_empty">Aún no has desbloqueado cartas. ¡Gana batallas para conseguirlas!</string>
+    <string name="collection_deck_full">El mazo ya tiene 15 cartas equipadas.</string>
+    <string name="collection_points_exceeded">Esta carta supera el límite de 80 puntos del mazo.</string>
+    <string name="collection_card_description">Carta de %1$s, valor %2$d</string>
+    <string name="collection_quantity">x%1$d</string>
+    <string name="collection_fire">FUEGO</string>
+    <string name="collection_water">AGUA</string>
+    <string name="collection_ice">HIELO</string>
+    <string name="collection_back">Volver</string>
+    <string name="collection_invalid_deck_title">Mazo incompleto</string>
+    <string name="collection_invalid_deck_message">Para jugar necesitas exactamente 15 cartas equipadas y un máximo de 80 puntos.</string>
+    <string name="collection_dismiss">Volver</string>
 </resources>

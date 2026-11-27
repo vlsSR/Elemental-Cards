@@ -65,21 +65,28 @@ class BattleViewModel(private val repository: CardRepository) : ViewModel() {
     val aiIcePoints = _aiIcePoints.asStateFlow()
 
 
-    private fun initDeck() {
+    private fun initDeck(onDeckReady: () -> Unit, onInvalidDeck: () -> Unit) {
         viewModelScope.launch {
             try {
                 repository.initDeck()
 
                 val playerDeck = repository.getPlayingDeck()
-                _playingHand.value = playerDeck.take(5)
-                _drawPile.value = playerDeck.drop(5)
-                _aiPlayingDeck.value = repository.getAiPlayingDeck().toMutableList()
+                if (
+                    playerDeck.size != repository.DECK_SIZE ||
+                    playerDeck.sumOf { it.value } > repository.MAX_POINTS
+                ) {
+                    onInvalidDeck()
+                } else {
+                    _playingHand.value = playerDeck.take(5)
+                    _drawPile.value = playerDeck.drop(5)
+                    _aiPlayingDeck.value = repository.getAiPlayingDeck().toMutableList()
+                    onDeckReady()
+                }
 
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
-
     }
 
 
@@ -208,9 +215,9 @@ class BattleViewModel(private val repository: CardRepository) : ViewModel() {
         }
     }
 
-    fun startNewGame() {
+    fun startNewGame(onDeckReady: () -> Unit, onInvalidDeck: () -> Unit) {
         reset()
-        initDeck()
+        initDeck(onDeckReady, onInvalidDeck)
     }
 }
 
