@@ -5,16 +5,19 @@ import kotlinx.coroutines.flow.Flow
 import com.example.elementalcards.data.local.CardDAO
 import com.example.elementalcards.data.local.Element
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.flow.toSet
-import kotlin.random.Random
 
 class CardRepository(private val dao: CardDAO) {
     val DECK_SIZE = 15
+    val MAX_POINTS = 80
     val getDeck: Flow<List<Card>> = dao.getDeck()
+    val unlockedCards: Flow<List<Card>> = dao.getUnlockedCards()
 
     suspend fun addCard(card: Card) {
         dao.addCard(card)
+    }
+
+    suspend fun setInDeck(cardId: Int, selected: Boolean) {
+        dao.setInDeck(cardId, selected)
     }
 
     suspend fun delete(card: Card) {
